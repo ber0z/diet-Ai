@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Goal {
+  CUT
+  MAINTAIN
+  BULK
+}
+
+enum ActivityLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum DietRequestStatus {
+  PENDING
+  PROCESSING
+  DONE
+  FAILED
+}
+
+model User {
+  id           Int          @id @default(autoincrement())
+  email        String       @unique
+  passwordHash String
+  createdAt    DateTime     @default(now())
+
+  profile      UserProfile?
+  dietRequests DietRequest[]
+}
+
+model UserProfile {
+  id            Int           @id @default(autoincrement())
+  userId        Int           @unique
+  user          User          @relation(fields: [userId], references: [id])
+
+  weightKg      Float
+  heightCm      Int
+  goal          Goal
+  activityLevel ActivityLevel
+  restrictions  Json?        
+
+  updatedAt     DateTime      @updatedAt
+}
+
+model DietRequest {
+  id            Int              @id @default(autoincrement())
+  userId        Int
+  user          User             @relation(fields: [userId], references: [id])
+
+  status        DietRequestStatus @default(PENDING)
+  config        Json          
+  result        Json?
+  error         String?
+
+  createdAt     DateTime          @default(now())
+  finishedAt    DateTime?
+}
+
+model Food {
+  id             Int     @id @default(autoincrement())
+  tacoId         Int?    @unique
+  name           String
+  normalizedName String  @unique
+
+  kcal      Float?
+  proteinG  Float?
+  carbsG    Float?
+  fatG      Float?
+  fiberG    Float?
+
+  createdAt DateTime @default(now())
+}

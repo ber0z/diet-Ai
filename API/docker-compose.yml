@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: dietai_postgres
+    environment:
+      POSTGRES_USER: dietai
+      POSTGRES_PASSWORD: dietai
+      POSTGRES_DB: dietai
+    ports:
+      - "5432:5432"
+    volumes:
+      - dietai_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dietai -d dietai"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7
+    container_name: dietai_redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: . 
+      dockerfile: Dockerfile
+    container_name: dietai_api
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: sh -c "npm install && npx prisma generate && npx prisma migrate deploy && npx prisma db seed && npm run start:dev"
+    
+volumes:
+  dietai_pg:
