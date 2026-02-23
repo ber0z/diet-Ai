@@ -17,7 +17,6 @@ Rodando em **modo desenvolvimento via Docker Compose** (hot reload) com Postgres
 
 O `docker-compose.yml` usa:
 
-```yaml
 env_file:
   - .env
 
@@ -40,42 +39,44 @@ JWT_SECRET=troque-por-um-segredo
 BCRYPT_SALT_ROUNDS=12
 Rodando com Docker (dev)
 
-Subir tudo:
+# Comandos
+
+### Subir tudo:
 
 docker compose up --build
 
-A API sobe em:
+### A API sobe em:
 
 http://localhost:3000
 
 Swagger: http://localhost:3000/docs
 
-Ver logs da API:
+### Ver logs da API:
 
 docker compose logs -f api
 
-Parar serviços:
+### Parar serviços:
 
 docker compose down
 
-Apagar volume do banco (reset total):
+### Apagar volume do banco (reset total):
 
 docker compose down -v
 Prisma (comandos úteis)
 
-Aplicar migrations manualmente:
+### Aplicar migrations manualmente:
 
 docker compose exec api npx prisma migrate deploy
 
-Rodar seed (se configurado):
+### Rodar seed (se configurado):
 
 docker compose exec api npx prisma db seed
 
-Abrir Prisma Studio:
+### Abrir Prisma Studio:
 
 docker compose exec api npx prisma studio
 
-Rodar testes:
+### Rodar testes:
 
 docker compose exec api npm test
 Fluxo básico (exemplo)
@@ -98,14 +99,6 @@ POST /diets (Authorization: Bearer <token>)
 
 Para detalhes completos de payloads/rotas, use o Swagger em /docs.
 
-Stack
+### Stack
 
-NestJS
-
-Prisma
-
-Postgres 16
-
-Redis 7
-
-BullMQ
+NestJS - Prisma - Postgres 16 - Redis 7 - BullMQ
